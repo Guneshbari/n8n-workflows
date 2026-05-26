@@ -1,0 +1,14 @@
+# Spreadsheets & Backups
+*.xlsx
+*.xls
+*.csv
+*.tsv
+
+# Environment & Credentials
+.env
+.env.local
+*.log
+
+# System & OS Files
+.DS_Store
+Thumbs.db

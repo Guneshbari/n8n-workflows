@@ -1,0 +1,281 @@
+{
+  "name": "Automated Social Media Content Generation with n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        736
+      ],
+      "id": "f8bd47ce-caae-4242-a86b-b661d91a7d6c",
+      "name": "Gemini - X/Twitter Content",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lb0aceovIRBjmc7K",
+          "name": "Google Gemini(PaLM) Api account 9503"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        304
+      ],
+      "id": "b89a04f4-553c-486b-83f5-f24c836951a0",
+      "name": "Gemini - LinkedIn Content",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lb0aceovIRBjmc7K",
+          "name": "Google Gemini(PaLM) Api account 9503"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        528
+      ],
+      "id": "0243139e-e216-4373-aae8-0c8abbad0a93",
+      "name": "Gemini - Article Summarizer",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lb0aceovIRBjmc7K",
+          "name": "Google Gemini(PaLM) Api account 9503"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        304
+      ],
+      "id": "7fe49fdf-3088-4f82-a9fe-7460d2a50b1a",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "9ZEZ4qjVObW4fKUl",
+          "name": "Google Sheets Trigger account 3765"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "person": "YOUR_LINKEDIN_PERSON_ID",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        304,
+        80
+      ],
+      "id": "f6047c79-f720-4391-9e01-6e861e54aa53",
+      "name": "Post to LinkedIn",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "yGcTgKM47wqWMnBg",
+          "name": "LinkedIn account 2745"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        304,
+        512
+      ],
+      "id": "f9d76d04-4399-42ac-a537-1debb0649ed0",
+      "name": "Post to Twitter"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Transform this learning summary into an engaging LinkedIn post: {{ $json.text }}\n\nCreate a post that:\n- Starts with a hook about today's learning achievement\n- Shares 2-3 specific insights or skills gained\n- Includes a reflection on how this knowledge applies to real-world scenarios\n- Uses relevant hashtags: #AIBootcamp #LearningJourney #GenerativeAI #TechSkills #100DaysOfCode\n- Ends with a question to engage the community\n- Length: 200-300 words\n- Professional yet authentic tone\n- Include relevant emojis for visual appeal\n\nFormat with line breaks for readability. Start directly with the ",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -48,
+        80
+      ],
+      "id": "cc2b4a30-80c5-499f-947a-ea41bbf2a245",
+      "name": "Generate LinkedIn Post Content"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a punchy X/Twitter post about this learning: {{ $json.text }}\n\nRequirements:\n- Celebrate the learning milestone enthusiastically\n- Mention 1 specific skill or tool learned\n- Keep under 280 characters\n- Include 2-3 hashtags: #AI #Learning #TechJourney\n- Add relevant emoji\n\nExample format: \"Day X: [achievement]! Learned [specific skill/tool]. [Key insight]. [Question/CTA]? #hashtags\"\n\nOutput only the tweet text.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -48,
+        512
+      ],
+      "id": "441cf9e1-b566-445d-b085-c2222531863d",
+      "name": "Generate X/Twitter PostContent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this learning progress entry and create a professional summary:\n\nDate: {{ $json.Date }}\nTopic: {{ $json['Topic/Module'] }}\nWhat I Learned: {{ $json['What I Learned'] }}\nSkills/Tools Used: {{ $json['Skills/Tools'] }}\n\nCreate a concise, impactful summary that:\n1. Highlights the main concept mastered\n2. Emphasizes practical skills gained\n3. Shows progression in the learning journey\n4. Maintains an enthusiastic but professional tone\n\nKeep it under 100 words, focusing on achievements and growth.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -400,
+        304
+      ],
+      "id": "a077f64e-015d-4a6c-9671-e0f493fadaa6",
+      "name": "Generate Summary"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gemini - X/Twitter Content": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate X/Twitter PostContent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - LinkedIn Content": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate LinkedIn Post Content",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Article Summarizer": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Summary",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate LinkedIn Post Content": {
+      "main": [
+        [
+          {
+            "node": "Post to LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate X/Twitter PostContent": {
+      "main": [
+        [
+          {
+            "node": "Post to Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Summary": {
+      "main": [
+        [
+          {
+            "node": "Generate LinkedIn Post Content",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate X/Twitter PostContent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8dffdad8-6082-4a67-b630-3849b821144a",
+  "meta": {
+    "instanceId": "969257b09ad2942bbaff2e2288304f4969030574d109cdeca05bf11f630884df"
+  },
+  "id": "GQM2RvNwGTx756H5",
+  "tags": []
+}
