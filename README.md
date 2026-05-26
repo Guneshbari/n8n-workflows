@@ -7,9 +7,9 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of five production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email curation, and job pipeline management.
+A comprehensive suite of six production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, and job pipeline management.
 
-Every workflow is fully generalized, safe for public distribution, and sanitized of all specific credential IDs or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
+Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
 ---
 
@@ -22,16 +22,17 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`AI News Summarizer.json`](./AI%20News%20Summarizer.json) | Aggregates multiple RSS tech feeds into an AI-categorized morning briefing. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Gmail API |
 | [`Auto AI Internship Applier.json`](./Auto%20AI%20Internship%20Applier.json) | Reads open positions from a spreadsheet and drafts/sends structured cover letters. | **Google Sheets** (New Row) | Google Gemini, Structured JSON Parser, Gmail API |
 | [`Automated LinkedIn Job Tracker with N8N.json`](./Automated%20LinkedIn%20Job%20Tracker%20with%20N8N.json) | Monitors LinkedIn job search RSS feeds, extracts skills, and drafts custom cover letters. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Google Sheets API |
+| [`AI News Summarizer Part 2.json`](./AI%20News%20Summarizer%20Part%202.json) | Combines RSS Feeds and SerpAPI Google News search query outputs into an expanded newsletter. | **Schedule Trigger** (Daily) | RSS Feeds, SerpAPI HTTP Node, Google Gemini, Gmail |
 
 ---
 
 ## ⚡ Detailed Workflow Breakdowns
 
 ### 1. Auto Learning Journey Publisher
-Monitors your learning entries, summarizes raw study notes, and generates tailored professional narratives for social media engagement.
+Monitors your learning entries, summarizes raw study notes, and generates platform-specific professional updates.
 
 * **Trigger**: Google Sheets (polls every minute).
-* **AI Logic**: Extracts topics and achievements, generates a detailed LinkedIn update with relevant tags, and creates an enthusiastically punchy tweet under 280 characters.
+* **AI Logic**: Extracts topics and achievements, generates a detailed LinkedIn update with tags, and creates an enthusiastically punchy tweet under 280 characters.
 * **Flow**:
 ```mermaid
 graph TD
@@ -47,7 +48,7 @@ graph TD
 ```
 
 ### 2. Automated Social Media Content Generation
-Acts as a thought-leadership generator. Evaluates raw articles or developer blogs, synthesizes implications for tech audiences, and schedules updates.
+Acts as a thought-leadership generator. Evaluates raw articles or developer blogs, synthesizes implications, and schedules updates.
 
 * **Trigger**: Google Sheets (polls every hour).
 * **AI Logic**: Summarizes article text, produces structural LinkedIn updates containing professional CTAs, and crafts short, high-impact tweets (within 30 words).
@@ -118,6 +119,29 @@ graph TD
     style E fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 6. AI News Summarizer Part 2
+An advanced, multi-source compilation pipeline. Simultaneously monitors custom technology RSS Feeds and queries Google News via a custom SerpAPI HTTP request to dynamically consolidate tech, development, and upcoming event schedules into one daily intelligence digest.
+
+* **Trigger**: Cron/Schedule (runs daily at 12:00 PM).
+* **AI Logic**: Pulls RSS nodes and runs a custom Google News search query utilizing SerpAPI. Merges three separate inputs, aggregates data, and uses a Gemini 2.5 Flash chat model to draft comprehensive summaries and schedule lists.
+* **Flow**:
+```mermaid
+graph TD
+    A[Schedule Trigger] --> B[RSS: NormalTech]
+    A --> C[RSS: AIBusiness]
+    A --> D[SerpAPI: Fetch Google News]
+    B --> E[Data Merger]
+    C --> E
+    D --> E
+    E --> F[Data Aggregator]
+    F --> G[AI Summarization Model]
+    G --> H[Email Sender via Gmail]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style G fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style H fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -125,24 +149,20 @@ graph TD
 For workflows that sync with Google Sheets, ensure your target worksheets are configured with the exact columns below:
 
 ### Workflow: `Auto Learning Journey Publisher`
-* **Sheet Name**: `Sheet1` (or customized)
-* **Required Headers (Case Sensitive)**:
-  `Date` | `Topic/Module` | `What I Learned` | `Skills/Tools`
+* **Sheet Name**: `Sheet1`
+* **Required Headers**: `Date` | `Topic/Module` | `What I Learned` | `Skills/Tools`
 
 ### Workflow: `Automated Social Media Content Generation`
 * **Sheet Name**: `Sheet1`
-* **Required Headers (Case Sensitive)**:
-  `text` | `Article Links`
+* **Required Headers**: `text` | `Article Links`
 
 ### Workflow: `Auto AI Internship Applier`
 * **Sheet Name**: `Sheet1`
-* **Required Headers (Case Sensitive)**:
-  `Full Name` | `Email` | `Position Applied` | `Details` | `Experience (Years)` | `Skills`
+* **Required Headers**: `Full Name` | `Email` | `Position Applied` | `Details` | `Experience (Years)` | `Skills`
 
 ### Workflow: `Automated LinkedIn Job Tracker`
 * **Sheet Name**: `Sheet1`
-* **Required Headers (Case Sensitive)**:
-  `Title` | `Link` | `Published Date` | `About Company and job description` | `skills` | `cover letter`
+* **Required Headers**: `Title` | `Link` | `Published Date` | `About Company and job description` | `skills` | `cover letter`
 
 ---
 
@@ -157,17 +177,19 @@ For workflows that sync with Google Sheets, ensure your target worksheets are co
 ### Step 2: Configure Credentials
 Set up credentials inside n8n for any integrations utilized by your imported workflow:
 
-1. **Google Gemini (PaLM) API**: Create an API Key inside [Google AI Studio](https://aistudio.google.com/). Add a **Google Gemini(PaLM) API** connection in n8n.
+1. **Google Gemini API**: Create an API Key inside [Google AI Studio](https://aistudio.google.com/). Add a **Google Gemini(PaLM) API** connection in n8n.
 2. **Google Sheets / Gmail API (OAuth2)**: Create a project on the [Google Cloud Console](https://console.cloud.google.com/), enable the target APIs, generate **OAuth 2.0 Client IDs**, and link them in n8n.
 3. **LinkedIn OAuth2 API**: Register an app on the [LinkedIn Developer Portal](https://developer.linkedin.com/), enable sharing capabilities, and link via OAuth2.
-4. **Twitter/X API**: Register your app on the [X Developer Portal](https://developer.x.com/) with **Read/Write** access, and configure user context key connections.
+4. **Twitter/X API**: Register your app on the [X Developer Portal](https://developer.x.com/) with **Read/Write** access, and configure user context connections.
+5. **SerpAPI (If using Summarizer Part 2)**: Register an account at [SerpAPI](https://serpapi.com/) and obtain a free API key.
 
 ### Step 3: Link Your Resources
 1. Create a spreadsheet in your Google Drive matching the matching column layout.
 2. Copy the spreadsheet's ID from its URL.
 3. Open the spreadsheet trigger/append nodes, replace `YOUR_SPREADSHEET_ID` in the **Document ID** parameter with your custom ID, and select the correct **Sheet Name**.
 4. In workflows that use custom RSS feeds (Job Tracker / News Summarizer), replace `YOUR_LINKEDIN_JOBS_RSS_FEED_URL` with your feed's URL.
-5. In the `AI News Summarizer` email node, replace `YOUR_EMAIL@gmail.com` with your delivery address.
+5. In email sender nodes, replace `YOUR_EMAIL@gmail.com` with your delivery address.
+6. In `AI News Summarizer Part 2.json`, open the `Fetch Events` HTTP node and replace the query parameter value `YOUR_SERPAPI_API_KEY` with your SerpAPI key.
 
 ---
 
@@ -176,8 +198,9 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 > [!IMPORTANT]
 > **Zero Credential Sharing**
 > 
-> * These exported `.json` workflows **do not** contain any API keys, access tokens, or private secrets. n8n isolates all credentials in an encrypted internal database and references them using internal placeholders (e.g., `credentials-uuid-here`).
-> * Ensure your spreadsheets and local credential config profiles are not added to Git. Keep your `.gitignore` active.
+> * These exported `.json` workflows **do not** contain any active auth accounts, passwords, or client secrets. n8n isolates all credentials in an encrypted internal database and references them using internal placeholders (e.g., `credentials-uuid-here`).
+> * Any required raw API query strings (e.g., SerpAPI keys) are generalized as `YOUR_SERPAPI_API_KEY`.
+> * Ensure your spreadsheet data files and local environment configuration sheets are ignored via the active `.gitignore`.
 
 ---
 
