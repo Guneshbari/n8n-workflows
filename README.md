@@ -1,162 +1,183 @@
-# 🤖 AI-Powered Social Media & Learning Journey Automation with n8n
+# 🤖 AI-Powered n8n Automation Suite: Content Curation, Job Hunting & Social Media Curation
 
 [![n8n Version](https://img.shields.io/badge/n8n-1.0+-FF6C37?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io/)
 [![LLM Power](https://img.shields.io/badge/Powered%20By-Google%20Gemini-4285F4?style=for-the-badge&logo=googlegemini&logoColor=white)](https://deepmind.google/technologies/gemini/)
 [![Spreadsheet Sync](https://img.shields.io/badge/Database-Google%20Sheets-34A853?style=for-the-badge&logo=googlesheets&logoColor=white)](https://www.google.com/sheets/about/)
+[![Gmail Sync](https://img.shields.io/badge/Email-Gmail-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](https://mail.google.com/)
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-An enterprise-ready, fully automated orchestration suite built on **n8n** that leverages **Google Gemini** LLMs to seamlessly convert Google Sheets data into high-performing, platforms-tailored social media content for **LinkedIn** and **X (formerly Twitter)**.
+A comprehensive suite of five production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email curation, and job pipeline management.
 
-Whether you want to document your daily coding journey or programmatically scale an AI-focused news curation channel, this repository provides plug-and-play workflows to automate your personal branding and content strategy.
+Every workflow is fully generalized, safe for public distribution, and sanitized of all specific credential IDs or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
 ---
 
 ## 📂 Repository Contents
 
-This repository hosts two distinct, production-grade n8n workflows designed to scale content generation using the modern LangChain node ecosystem:
-
 | Workflow File | Purpose | Trigger Source | Core Integrations |
 | :--- | :--- | :--- | :--- |
-| [`Auto Learning Journey Publisher.json`](./Auto%20Learning%20Journey%20Publisher.json) | Converts learning progress logs into structured LinkedIn and punchy X posts. | **Google Sheets** (every minute) | Google Gemini, LinkedIn API, Twitter/X API |
-| [`Automated Social Media Content Generation.json`](./Automated%20Social%20Media%20Content%20Generation.json) | Summarizes industry-specific articles/links, drafts insights, and schedules posts. | **Google Sheets** (every hour) | Google Gemini, LinkedIn API, Twitter/X API |
+| [`Auto Learning Journey Publisher.json`](./Auto%20Learning%20Journey%20Publisher.json) | Converts learning logs into structured LinkedIn updates and punchy X posts. | **Google Sheets** (every minute) | Google Gemini, LinkedIn API, Twitter/X API |
+| [`Automated Social Media Content Generation.json`](./Automated%20Social%20Media%20Content%20Generation.json) | Curates and drafts insights for articles/links into social media updates. | **Google Sheets** (every hour) | Google Gemini, LinkedIn API, Twitter/X API |
+| [`AI News Summarizer.json`](./AI%20News%20Summarizer.json) | Aggregates multiple RSS tech feeds into an AI-categorized morning briefing. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Gmail API |
+| [`Auto AI Internship Applier.json`](./Auto%20AI%20Internship%20Applier.json) | Reads open positions from a spreadsheet and drafts/sends structured cover letters. | **Google Sheets** (New Row) | Google Gemini, Structured JSON Parser, Gmail API |
+| [`Automated LinkedIn Job Tracker with N8N.json`](./Automated%20LinkedIn%20Job%20Tracker%20with%20N8N.json) | Monitors LinkedIn job search RSS feeds, extracts skills, and drafts custom cover letters. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Google Sheets API |
 
 ---
 
-## ⚡ Workflow Breakdown & Architecture
+## ⚡ Detailed Workflow Breakdowns
 
 ### 1. Auto Learning Journey Publisher
-**File:** `Auto Learning Journey Publisher.json`
+Monitors your learning entries, summarizes raw study notes, and generates tailored professional narratives for social media engagement.
 
-This workflow is optimized for builders, students, and engineers participating in challenges like **#100DaysOfCode** or tracking their professional growth. It polls a tracking sheet, summarizes raw learning notes, and constructs platform-specific narratives.
-
-#### 🏗️ Architecture Flow
+* **Trigger**: Google Sheets (polls every minute).
+* **AI Logic**: Extracts topics and achievements, generates a detailed LinkedIn update with relevant tags, and creates an enthusiastically punchy tweet under 280 characters.
+* **Flow**:
 ```mermaid
 graph TD
-    A[Google Sheets Trigger <br><i>Polls Every Minute</i>] --> B[Gemini - Article Summarizer <br><i>Summarize raw inputs</i>]
-    B --> C[Generate LinkedIn Post <br><i>Professional & engaging hook</i>]
-    B --> D[Generate X/Twitter Post <br><i>Punchy, <= 280 chars</i>]
-    C --> E[Post to LinkedIn <br><i>linkedIn API</i>]
-    D --> F[Post to X/Twitter <br><i>twitter API</i>]
-
-    style A fill:#34A85 green,stroke:#fff,stroke-width:2px,color:#fff
+    A[Google Sheets Trigger] --> B[Gemini - Article Summarizer]
+    B --> C[Generate LinkedIn Post]
+    B --> D[Generate X/Twitter Post]
+    C --> E[Post to LinkedIn]
+    D --> F[Post to X/Twitter]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
     style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
-    style C fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
-    style D fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
     style E fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
     style F fill:#111,stroke:#fff,stroke-width:2px,color:#fff
 ```
-
-#### 📊 Google Sheet Schema
-To run this workflow, your target Google Sheet **must** contain a worksheet with the following header names (Case Sensitive):
-
-| Column Name | Type | Description / Example |
-| :--- | :--- | :--- |
-| `Date` | Date | `2026-05-26` |
-| `Topic/Module` | Text | `Retrieval-Augmented Generation (RAG) Architecture` |
-| `What I Learned` | Text | `Explored semantic search vs keyword search, set up vector embeddings utilizing Google Gemini Embeddings, and configured a vector DB pipeline.` |
-| `Skills/Tools` | Text | `Python, LangChain, Qdrant, Vector Embeddings` |
-
----
 
 ### 2. Automated Social Media Content Generation
-**File:** `Automated Social Media Content Generation.json`
+Acts as a thought-leadership generator. Evaluates raw articles or developer blogs, synthesizes implications for tech audiences, and schedules updates.
 
-This workflow serves as a programmatic **News Curator**. It monitors a spreadsheet containing articles and raw links, leverages Gemini to perform an advanced multi-perspective summary, and produces professional thought-leadership posts.
-
-#### 🏗️ Architecture Flow
+* **Trigger**: Google Sheets (polls every hour).
+* **AI Logic**: Summarizes article text, produces structural LinkedIn updates containing professional CTAs, and crafts short, high-impact tweets (within 30 words).
+* **Flow**:
 ```mermaid
 graph TD
-    A[Google Sheets Trigger <br><i>Polls Every Hour</i>] --> B[Summarize News Article <br><i>Extracts 3 key insights, actions</i>]
-    B --> C[Generate LinkedIn Post <br><i>Detailed industry analysis & CTA</i>]
-    B --> D[Generate X/Twitter Post <br><i>Ultra-punchy, <= 30 words</i>]
-    C --> E[Create a post <br><i>linkedIn API</i>]
-    D --> F[Create Tweet <br><i>twitter API</i>]
-
-    style A fill:#34A85green,stroke:#fff,stroke-width:2px,color:#fff
+    A[Google Sheets Trigger] --> B[Summarize News Article]
+    B --> C[Generate LinkedIn Post]
+    B --> D[Generate X/Twitter Post]
+    C --> E[Create a Post]
+    D --> F[Create Tweet]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
     style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
-    style C fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
-    style D fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
     style E fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
     style F fill:#111,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-#### 📊 Google Sheet Schema
-To run this workflow, configure your target Google Sheet with these columns:
+### 3. AI News Summarizer
+Aggregates news items from multiple RSS tech portals, consolidates them, and feeds them into Gemini to build a beautifully structured morning briefing.
 
-| Column Name | Type | Description / Example |
-| :--- | :--- | :--- |
-| `text` | Text | Raw content of the article or developer blog post. |
-| `Article Links` | URL | Link to original source (e.g., `https://deepmind.google/blog/...`). |
+* **Trigger**: Cron/Schedule (runs daily at 10:00 AM).
+* **AI Logic**: Merges feeds from diverse sources, filters articles, sorts them by logical headings (`AI NEWS`, `TECHNOLOGY UPDATES`), and highlights 3 items per section.
+* **Flow**:
+```mermaid
+graph TD
+    A[Schedule Trigger] --> B[RSS: Source A]
+    A --> C[RSS: Source B]
+    B --> D[Data Merger]
+    C --> D
+    D --> E[Data Aggregator]
+    E --> F[AI Summarization Model]
+    F --> G[Email Sender via Gmail]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style F fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style G fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
+### 4. Auto AI Internship Applier
+Automates the initial outreach stage for internship applications by reviewing open pipeline spreadsheets and drafting personalized introduction letters.
+
+* **Trigger**: Google Sheets (new application row appended).
+* **AI Logic**: Evaluates role, company, student's details, and experience. Leverages a LangChain **Structured Output Parser** to format the output as strict JSON schema containing `{to, subject, body}`.
+* **Flow**:
+```mermaid
+graph TD
+    A[Google Sheets Trigger] --> B[Basic LLM Chain]
+    C[Structured Output Parser] -.-> B
+    B --> D[Send via Gmail]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
+### 5. Automated LinkedIn Job Tracker
+Scrapes targeted job search feeds, parses specifications, identifies critical programming/architectural requirements, generates professional matching cover letters, and appends them to your tracking dashboard.
+
+* **Trigger**: Cron/Schedule (runs daily at 1:00 AM).
+* **AI Logic**: Consumes feed details, extracts specific technical requirements into list arrays, writes a cover letter, and updates your sheet records.
+* **Flow**:
+```mermaid
+graph TD
+    A[Schedule Trigger] --> B[RSS Read LinkedIn Jobs]
+    B --> C[Basic LLM Chain]
+    D[Structured Output Parser] -.-> C
+    C --> E[Append/Update Google Sheet]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style E fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+```
 
 ---
 
-## 🛠️ Step-by-Step Setup Guide
+## 📊 Database & Spreadsheet Schemas
 
-Follow these steps to deploy and run these workflows inside your n8n instance:
+For workflows that sync with Google Sheets, ensure your target worksheets are configured with the exact columns below:
 
-### Step 1: Import the Workflows
+### Workflow: `Auto Learning Journey Publisher`
+* **Sheet Name**: `Sheet1` (or customized)
+* **Required Headers (Case Sensitive)**:
+  `Date` | `Topic/Module` | `What I Learned` | `Skills/Tools`
+
+### Workflow: `Automated Social Media Content Generation`
+* **Sheet Name**: `Sheet1`
+* **Required Headers (Case Sensitive)**:
+  `text` | `Article Links`
+
+### Workflow: `Auto AI Internship Applier`
+* **Sheet Name**: `Sheet1`
+* **Required Headers (Case Sensitive)**:
+  `Full Name` | `Email` | `Position Applied` | `Details` | `Experience (Years)` | `Skills`
+
+### Workflow: `Automated LinkedIn Job Tracker`
+* **Sheet Name**: `Sheet1`
+* **Required Headers (Case Sensitive)**:
+  `Title` | `Link` | `Published Date` | `About Company and job description` | `skills` | `cover letter`
+
+---
+
+## 🛠️ Step-by-Step Deployment & Configuration
+
+### Step 1: Import the Workflow
 1. Log into your **n8n** instance.
 2. In the left navigation, click on **Workflows** -> **Add Workflow** -> **Import from File**.
-3. Select one of the JSON files from this repository (e.g., `Auto Learning Journey Publisher.json`).
+3. Choose one of the JSON files from this repository.
 4. Click **Import**.
 
 ### Step 2: Configure Credentials
-These workflows leverage specific external APIs. You must set up and link credentials inside n8n:
+Set up credentials inside n8n for any integrations utilized by your imported workflow:
 
-1. **Google Gemini (PaLM) API**:
-   - Go to [Google AI Studio](https://aistudio.google.com/).
-   - Generate a new **API Key**.
-   - In n8n, create a new credential for **Google Gemini(PaLM) API** and paste your API key.
-2. **Google Sheets OAuth2 API**:
-   - Create a project on the [Google Cloud Console](https://console.cloud.google.com/).
-   - Enable the **Google Sheets API** and **Google Drive API**.
-   - Configure your **OAuth Consent Screen** and create **OAuth 2.0 Client IDs**.
-   - Create a Google Sheets credential in n8n and link it using the client ID and secret.
-3. **LinkedIn OAuth2 API**:
-   - Register an application on the [LinkedIn Developer Portal](https://developer.linkedin.com/).
-   - Add the **Share on LinkedIn** and **Sign In with LinkedIn** products/permissions.
-   - Configure the Redirect URI provided by n8n.
-   - Create and link the credential in n8n.
-4. **Twitter/X API**:
-   - Register an application on the [X Developer Portal](https://developer.x.com/).
-   - Enable **Read and Write** permissions.
-   - Generate your **OAuth 2.0 User Context** keys (Client ID and Client Secret) or OAuth 1.0a credentials.
-   - Set up the **Twitter / X** node credentials in n8n.
+1. **Google Gemini (PaLM) API**: Create an API Key inside [Google AI Studio](https://aistudio.google.com/). Add a **Google Gemini(PaLM) API** connection in n8n.
+2. **Google Sheets / Gmail API (OAuth2)**: Create a project on the [Google Cloud Console](https://console.cloud.google.com/), enable the target APIs, generate **OAuth 2.0 Client IDs**, and link them in n8n.
+3. **LinkedIn OAuth2 API**: Register an app on the [LinkedIn Developer Portal](https://developer.linkedin.com/), enable sharing capabilities, and link via OAuth2.
+4. **Twitter/X API**: Register your app on the [X Developer Portal](https://developer.x.com/) with **Read/Write** access, and configure user context key connections.
 
-### Step 3: Link Your Google Sheet
-1. Create a spreadsheet in Google Drive matching the column schemas described above.
-2. Copy the **Spreadsheet ID** from the URL:
-   `https://docs.google.com/spreadsheets/d/[SPREADSHEET_ID_IS_HERE]/edit`
-3. In both the `Google Sheets Trigger` node and any other sheet referencing nodes, replace the `Document ID` field with your own **Spreadsheet ID**.
-4. Select your target **Sheet Name** (e.g., `Sheet1`).
-
-### Step 4: Test & Activate
-1. Click **Listen for Test Event** on the Google Sheets Trigger.
-2. Add a new row to your Google Sheet.
-3. Verify the execution flow and inspect the generated posts in the node output.
-4. If everything looks perfect, toggle the workflow status from **Inactive** to **Active** in the top right corner.
-
----
-
-## 🎨 Prompt Customization & Tweaking
-
-You can easily tweak the AI tone, formatting, and parameters to match your personal brand or project needs:
-
-* **To adjust LinkedIn post formatting**: Open the `Generate LinkedIn Post Content` node and modify the text template. You can add default hashtags, mandate specific structures (e.g. key bullet points, custom CTAs), or specify formatting constraints.
-* **To adjust X/Twitter limits**: Open the `Generate X/Twitter PostContent` node. By default, it uses prompt templates designed to force the LLM to output content under 280 characters or under 30 words.
-* **To change the model version**: The LLM Chat node (`@n8n/n8n-nodes-langchain.lmChatGoogleGemini`) is currently set to `models/gemini-3-flash-preview`. You can change this to standard stable models like `gemini-1.5-flash` or `gemini-1.5-pro` directly in the dropdown menu.
+### Step 3: Link Your Resources
+1. Create a spreadsheet in your Google Drive matching the matching column layout.
+2. Copy the spreadsheet's ID from its URL.
+3. Open the spreadsheet trigger/append nodes, replace `YOUR_SPREADSHEET_ID` in the **Document ID** parameter with your custom ID, and select the correct **Sheet Name**.
+4. In workflows that use custom RSS feeds (Job Tracker / News Summarizer), replace `YOUR_LINKEDIN_JOBS_RSS_FEED_URL` with your feed's URL.
+5. In the `AI News Summarizer` email node, replace `YOUR_EMAIL@gmail.com` with your delivery address.
 
 ---
 
 ## 🔒 Security Best Practices
 
-> [!WARNING]
-> **API Key and Credential Safety First!**
+> [!IMPORTANT]
+> **Zero Credential Sharing**
 > 
-> * **Never edit or insert** raw credentials, API keys, or oauth client secrets directly into the `.json` files. 
-> * n8n securely isolates credentials inside its own encrypted internal database, referencing them inside the JSON export using abstract system IDs (like `lb0aceovIRBjmc7K`).
-> * Ensure your `.gitignore` file excludes any temporary sheet backups or API configurations that could accidentally expose environment variables.
+> * These exported `.json` workflows **do not** contain any API keys, access tokens, or private secrets. n8n isolates all credentials in an encrypted internal database and references them using internal placeholders (e.g., `credentials-uuid-here`).
+> * Ensure your spreadsheets and local credential config profiles are not added to Git. Keep your `.gitignore` active.
 
 ---
 

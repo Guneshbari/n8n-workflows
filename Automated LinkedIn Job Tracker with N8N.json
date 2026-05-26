@@ -1,0 +1,266 @@
+{
+  "name": "Automated LinkedIn Job Tracker with N8N",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "725c02f0-8d91-4736-890e-45de48bc0ebb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional career advisor and technical recruiter. Analyze the job posting data and extract technical skills from the job description, then generate a personalized cover letter addressing the specific requirements.\n\nExtract Technical Skills: Identify all relevant technical skills required for the position including programming languages, frameworks, tools, and both explicitly mentioned and implicitly required skills.\n\nGenerate Cover Letter: Create a compelling 250-300 word cover letter that addresses the specific company and role, references key responsibilities, shows enthusiasm for mentioned aspects, includes relevant matching skills, and uses professional yet enthusiastic tone.\n\nStructure the cover letter as: Opening (interest in role) → Middle (relevant skills/experience) → Closing (enthusiasm and next steps).\n\nInput data:\nTitle: {{ $('RSS Read LinkedIn').item.json.title }}\nLink: {{ $('RSS Read LinkedIn').item.json.link }}\nPublished Date: {{ $('RSS Read LinkedIn').item.json.pubDate }}\nAbout Company and job description: {{ $('RSS Read LinkedIn').item.json.contentSnippet }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        416,
+        0
+      ],
+      "id": "66e894b5-6a32-40e4-9eb5-b564aad3d598",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        192
+      ],
+      "id": "240cbead-b615-4554-b74a-cc0cb42fe0ab",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MdIdBqktfymXoCrv",
+          "name": "Google Gemini(PaLM) Api account 9575"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Title\": \"Job Title from RSS Feed\",\n  \"Link\": \"Job posting URL\",\n  \"Published Date\": \"Publication timestamp\",\n  \"About Company and job description\": \"Full job description content\",\n  \"skills\": \"[Array of extracted technical skills]\",\n  \"cover letter\": \"Generated personalized cover letter\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        192
+      ],
+      "id": "2d00ba7e-e99b-4044-91a4-95fc73308462",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SPREADSHEET_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_SPREADSHEET_NAME",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Published Date": "Tue, 26 May 2026 04:30:13 +0000"
+          },
+          "matchingColumns": [
+            "Published Date"
+          ],
+          "schema": [
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Link",
+              "displayName": "Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Published Date",
+              "displayName": "Published Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "About Company and job description",
+              "displayName": "About Company and job description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "skills",
+              "displayName": "skills",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cover letter",
+              "displayName": "cover letter",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        768,
+        0
+      ],
+      "id": "dbd9455e-e698-425d-9c5d-e549786e0e96",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "EWzcDWLM7uvzKNWM",
+          "name": "Google Sheets account 816"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "YOUR_LINKEDIN_JOBS_RSS_FEED_URL",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6277a5f9-bdd2-4e4d-9353-7d092c6723c3",
+      "name": "RSS Read LinkedIn"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read LinkedIn",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read LinkedIn": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "bd8491f5-09b3-447c-b2f6-b78abc76dadd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "969257b09ad2942bbaff2e2288304f4969030574d109cdeca05bf11f630884df"
+  },
+  "id": "UaAthXwa8BdzB5vU",
+  "tags": []
+}
