@@ -7,7 +7,7 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of six production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, and job pipeline management.
+A comprehensive suite of seven production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
 
 Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
@@ -23,6 +23,7 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`Auto AI Internship Applier.json`](./Auto%20AI%20Internship%20Applier.json) | Reads open positions from a spreadsheet and drafts/sends structured cover letters. | **Google Sheets** (New Row) | Google Gemini, Structured JSON Parser, Gmail API |
 | [`Automated LinkedIn Job Tracker with N8N.json`](./Automated%20LinkedIn%20Job%20Tracker%20with%20N8N.json) | Monitors LinkedIn job search RSS feeds, extracts skills, and drafts custom cover letters. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Google Sheets API |
 | [`AI News Summarizer Part 2.json`](./AI%20News%20Summarizer%20Part%202.json) | Combines RSS Feeds and SerpAPI Google News search query outputs into an expanded newsletter. | **Schedule Trigger** (Daily) | RSS Feeds, SerpAPI HTTP Node, Google Gemini, Gmail |
+| [`Automated Historical Content Publisher.json`](./Automated%20Historical%20Content%20Publisher.json) | Automatically discovers historical facts based on the current date, writes structured LinkedIn posts, and publishes them. | **Schedule Trigger** (Daily) | Google Gemini, LinkedIn API |
 
 ---
 
@@ -70,7 +71,7 @@ graph TD
 Aggregates news items from multiple RSS tech portals, consolidates them, and feeds them into Gemini to build a beautifully structured morning briefing.
 
 * **Trigger**: Cron/Schedule (runs daily at 10:00 AM).
-* **AI Logic**: Merges feeds from diverse sources, filters articles, sorts them by logical headings (`AI NEWS`, `TECHNOLOGY UPDATES`), and highlights 3 items per section.
+* **AI Logic**: Merges feeds from diverse sources, filters articles, sorts them by headings (`AI NEWS`, `TECHNOLOGY UPDATES`), and highlights 3 items per section.
 * **Flow**:
 ```mermaid
 graph TD
@@ -142,6 +143,21 @@ graph TD
     style H fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 7. Automated Historical Content Publisher
+Automatically tracks the current calendar date, prompts Gemini to find a compelling, historically significant event that occurred "on this day", formats a professional, high-engagement story layout with discussion prompts and hashtags, and publishes it to your LinkedIn feed.
+
+* **Trigger**: Cron/Schedule (runs daily at 12:00 PM).
+* **AI Logic**: Obtains today's date dynamically (`{{ $now.toFormat('MMMM d') }}`), writes a custom prompt template, processes the data through Gemini 2.5 Flash, and publishes to the LinkedIn API.
+* **Flow**:
+```mermaid
+graph TD
+    A[Schedule Trigger] --> B[History Generator via Gemini]
+    B --> C[Create a Post on LinkedIn]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -190,6 +206,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 4. In workflows that use custom RSS feeds (Job Tracker / News Summarizer), replace `YOUR_LINKEDIN_JOBS_RSS_FEED_URL` with your feed's URL.
 5. In email sender nodes, replace `YOUR_EMAIL@gmail.com` with your delivery address.
 6. In `AI News Summarizer Part 2.json`, open the `Fetch Events` HTTP node and replace the query parameter value `YOUR_SERPAPI_API_KEY` with your SerpAPI key.
+7. In `Automated Historical Content Publisher.json` and any other LinkedIn-enabled workflow, open the `Create a post` node and link your personal profile so `YOUR_LINKEDIN_PERSON_ID` is mapped to your member profile.
 
 ---
 
@@ -199,7 +216,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 > **Zero Credential Sharing**
 > 
 > * These exported `.json` workflows **do not** contain any active auth accounts, passwords, or client secrets. n8n isolates all credentials in an encrypted internal database and references them using internal placeholders (e.g., `credentials-uuid-here`).
-> * Any required raw API query strings (e.g., SerpAPI keys) are generalized as `YOUR_SERPAPI_API_KEY`.
+> * Any required raw API query strings (e.g., SerpAPI keys) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_LINKEDIN_PERSON_ID`).
 > * Ensure your spreadsheet data files and local environment configuration sheets are ignored via the active `.gitignore`.
 
 ---
