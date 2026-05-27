@@ -7,7 +7,7 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of seven production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
+A comprehensive suite of eight production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
 
 Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
@@ -24,6 +24,7 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`Automated LinkedIn Job Tracker with N8N.json`](./Automated%20LinkedIn%20Job%20Tracker%20with%20N8N.json) | Monitors LinkedIn job search RSS feeds, extracts skills, and drafts custom cover letters. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Google Sheets API |
 | [`AI News Summarizer Part 2.json`](./AI%20News%20Summarizer%20Part%202.json) | Combines RSS Feeds and SerpAPI Google News search query outputs into an expanded newsletter. | **Schedule Trigger** (Daily) | RSS Feeds, SerpAPI HTTP Node, Google Gemini, Gmail |
 | [`Automated Historical Content Publisher.json`](./Automated%20Historical%20Content%20Publisher.json) | Automatically discovers historical facts based on the current date, writes structured LinkedIn posts, and publishes them. | **Schedule Trigger** (Daily) | Google Gemini, LinkedIn API |
+| [`Automated Social Media Content Generation with Image.json`](./Automated%20Social%20Media%20Content%20Generation%20with%20Image.json) | Curates insights for links, drafts professional posts, generates AI graphics via Replicate, and posts to LinkedIn with media. | **Google Sheets** (New Row) | Google Sheets, Google Gemini, Replicate API, LinkedIn API |
 
 ---
 
@@ -158,6 +159,32 @@ graph TD
     style C fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 8. Automated Social Media Content Generation with Image
+An advanced branding and thought-leadership creation agent. Consumes article links, summarizes their content, generates a professional LinkedIn writeup, prompts an image generation model on Replicate (Flux 2 Pro) to produce a matching high-quality visual, downloads the resulting graphic, and publishes a media post directly to LinkedIn.
+
+* **Trigger**: Google Sheets (new row containing article link).
+* **AI Logic**: 
+  - Summarizes the source article text.
+  - Drafts an analytical LinkedIn post under 3,000 characters.
+  - Designs a visual prompt under 50 words tailored for modern technology/business visuals.
+  - Submits predictions via Replicate API, polls for status, downloads the media, and publishes to LinkedIn.
+* **Flow**:
+```mermaid
+graph TD
+    A[Google Sheets Trigger] --> B[Summarize Article]
+    B --> C[Create LinkedIn Post]
+    C --> D[Generate Image Prompt]
+    D --> E[HTTP Request: Replicate flux-2-pro]
+    E --> F[Wait 30 Seconds]
+    F --> G[HTTP Request: Check Status]
+    G --> H[HTTP Request: Download Image]
+    H --> I[Post to LinkedIn with Media]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style E fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style I fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -180,6 +207,10 @@ For workflows that sync with Google Sheets, ensure your target worksheets are co
 * **Sheet Name**: `Sheet1`
 * **Required Headers**: `Title` | `Link` | `Published Date` | `About Company and job description` | `skills` | `cover letter`
 
+### Workflow: `Automated Social Media Content Generation with Image`
+* **Sheet Name**: `Sheet1`
+* **Required Headers**: `newslink`
+
 ---
 
 ## 🛠️ Step-by-Step Deployment & Configuration
@@ -198,6 +229,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 3. **LinkedIn OAuth2 API**: Register an app on the [LinkedIn Developer Portal](https://developer.linkedin.com/), enable sharing capabilities, and link via OAuth2.
 4. **Twitter/X API**: Register your app on the [X Developer Portal](https://developer.x.com/) with **Read/Write** access, and configure user context connections.
 5. **SerpAPI (If using Summarizer Part 2)**: Register an account at [SerpAPI](https://serpapi.com/) and obtain a free API key.
+6. **Replicate API (If using Social Media Content with Image)**: Create an account on [Replicate](https://replicate.com/), generate an API token, and input `Token YOUR_REPLICATE_API_TOKEN` in the `Authorization` headers of both HTTP request nodes.
 
 ### Step 3: Link Your Resources
 1. Create a spreadsheet in your Google Drive matching the matching column layout.
@@ -207,6 +239,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 5. In email sender nodes, replace `YOUR_EMAIL@gmail.com` with your delivery address.
 6. In `AI News Summarizer Part 2.json`, open the `Fetch Events` HTTP node and replace the query parameter value `YOUR_SERPAPI_API_KEY` with your SerpAPI key.
 7. In `Automated Historical Content Publisher.json` and any other LinkedIn-enabled workflow, open the `Create a post` node and link your personal profile so `YOUR_LINKEDIN_PERSON_ID` is mapped to your member profile.
+8. In `Automated Social Media Content Generation with Image.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN`.
 
 ---
 
@@ -216,7 +249,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 > **Zero Credential Sharing**
 > 
 > * These exported `.json` workflows **do not** contain any active auth accounts, passwords, or client secrets. n8n isolates all credentials in an encrypted internal database and references them using internal placeholders (e.g., `credentials-uuid-here`).
-> * Any required raw API query strings (e.g., SerpAPI keys) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_LINKEDIN_PERSON_ID`).
+> * Any required raw API query strings (e.g., SerpAPI keys, Replicate API tokens) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_REPLICATE_API_TOKEN`, `YOUR_LINKEDIN_PERSON_ID`).
 > * Ensure your spreadsheet data files and local environment configuration sheets are ignored via the active `.gitignore`.
 
 ---
