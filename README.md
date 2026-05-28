@@ -7,7 +7,7 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of nine production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
+A comprehensive suite of ten production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
 
 Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
@@ -26,6 +26,7 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`Automated Historical Content Publisher.json`](./Automated%20Historical%20Content%20Publisher.json) | Automatically discovers historical facts based on the current date, writes structured LinkedIn posts, and publishes them. | **Schedule Trigger** (Daily) | Google Gemini, LinkedIn API |
 | [`Automated Social Media Content Generation with Image.json`](./Automated%20Social%20Media%20Content%20Generation%20with%20Image.json) | Curates insights for links, drafts professional posts, generates AI graphics via Replicate, and posts to LinkedIn with media. | **Google Sheets** (New Row) | Google Sheets, Google Gemini, Replicate API, LinkedIn API |
 | [`AI Podcast Generator.json`](./AI%20Podcast%20Generator.json) | Generates a 2-minute spoken podcast script on a given topic, synthesizes it into natural speech via Murf AI, and downloads the podcast WAV file. | **Chat Trigger** (User Input) | Google Gemini, Murf AI HTTP Node |
+| [`AI Audio Summarization and Speech Generation.json`](./AI%20Audio%20Summarization%20and%20Speech%20Generation.json) | Downloads audio input from chat, transcribes it via Groq Whisper, creates meeting-style minutes via Gemini, and synthesizes it to speech via Murf AI. | **Chat Trigger** (User Audio URL) | Groq Whisper Node, Google Gemini, Murf AI Node |
 
 ---
 
@@ -207,6 +208,31 @@ graph TD
     style D fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 10. AI Audio Summarization and Speech Generation
+A high-performance voice-to-text-to-voice media processing agent. Takes an audio URL provided through an n8n chat trigger interface, downloads the audio file, transcribes it using Groq's high-speed **Whisper Large V3 Turbo** model, processes the raw transcription into highly structured meeting minutes using Gemini 2.5 Flash Lite (following strict formatting and concise phrasing rules), and synthesizes the finalized minutes back into a professional spoken WAV audio file via Murf AI's voice synthesis engine.
+
+* **Trigger**: Chat Trigger (on receiving user message query containing audio file URL).
+* **AI Logic**: 
+  - Downloads the source audio file from the user's input URL.
+  - Transcribes the audio file via Groq Whisper API node (`whisper-large-v3-turbo`).
+  - Summarizes the transcription into clear meeting minutes using Gemini 2.5 Flash Lite.
+  - Submits the bulleted minutes to Murf AI for high-fidelity speech synthesis, returning a downloadable WAV podcast file.
+* **Flow**:
+```mermaid
+graph TD
+    A[Chat Trigger] --> B[Download Audio HTTP Node]
+    B --> C[HTTP Request: Groq Whisper Transcription]
+    C --> D[Basic LLM Chain via Gemini]
+    D --> E[HTTP Request: Generate Speech via Murf AI]
+    E --> F[Download Audio WAV File]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style E fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style F fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -253,6 +279,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 5. **SerpAPI (If using Summarizer Part 2)**: Register an account at [SerpAPI](https://serpapi.com/) and obtain a free API key.
 6. **Replicate API (If using Social Media Content with Image)**: Create an account on [Replicate](https://replicate.com/), generate an API token, and input `Token YOUR_REPLICATE_API_TOKEN` in the `Authorization` headers of both HTTP request nodes.
 7. **Murf AI API (If using AI Podcast Generator)**: Register an account on [Murf AI](https://murf.ai/), generate an API key, and configure `api-key` in the headers parameter of the HTTP node with `YOUR_MURF_API_KEY`.
+8. **Groq API (If using AI Audio Summarization and Speech Generation)**: Create an API Key on the [Groq Console](https://console.groq.com/), and input `Bearer YOUR_GROQ_API_KEY` in the `Authorization` header of the transcription HTTP request node.
 
 ### Step 3: Link Your Resources
 1. Create a spreadsheet in your Google Drive matching the matching column layout.
@@ -264,6 +291,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 7. In `Automated Historical Content Publisher.json` and any other LinkedIn-enabled workflow, open the `Create a post` node and link your personal profile so `YOUR_LINKEDIN_PERSON_ID` is mapped to your member profile.
 8. In `Automated Social Media Content Generation with Image.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN`.
 9. In `AI Podcast Generator.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY`.
+10. In `AI Audio Summarization and Speech Generation.json`, replace the hardcoded Groq API key with `Bearer YOUR_GROQ_API_KEY` and the Murf AI key with `YOUR_MURF_API_KEY` in their respective HTTP Request header parameters.
 
 ---
 
@@ -273,7 +301,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 > **Zero Credential Sharing**
 > 
 > * These exported `.json` workflows **do not** contain any active auth accounts, passwords, or client secrets. n8n isolates all credentials in an encrypted internal database and references them using internal placeholders (e.g., `credentials-uuid-here`).
-> * Any required raw API query strings or headers (e.g., SerpAPI keys, Replicate API tokens, Murf AI API keys) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_REPLICATE_API_TOKEN`, `YOUR_MURF_API_KEY`, `YOUR_LINKEDIN_PERSON_ID`).
+> * Any required raw API query strings or headers (e.g., SerpAPI keys, Replicate API tokens, Murf AI API keys, Groq API keys) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_REPLICATE_API_TOKEN`, `YOUR_MURF_API_KEY`, `YOUR_GROQ_API_KEY`, `YOUR_LINKEDIN_PERSON_ID`).
 > * Ensure your spreadsheet data files and local environment configuration sheets are ignored via the active `.gitignore`.
 
 ---
