@@ -7,7 +7,7 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of eight production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
+A comprehensive suite of nine production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
 
 Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
@@ -25,6 +25,7 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`AI News Summarizer Part 2.json`](./AI%20News%20Summarizer%20Part%202.json) | Combines RSS Feeds and SerpAPI Google News search query outputs into an expanded newsletter. | **Schedule Trigger** (Daily) | RSS Feeds, SerpAPI HTTP Node, Google Gemini, Gmail |
 | [`Automated Historical Content Publisher.json`](./Automated%20Historical%20Content%20Publisher.json) | Automatically discovers historical facts based on the current date, writes structured LinkedIn posts, and publishes them. | **Schedule Trigger** (Daily) | Google Gemini, LinkedIn API |
 | [`Automated Social Media Content Generation with Image.json`](./Automated%20Social%20Media%20Content%20Generation%20with%20Image.json) | Curates insights for links, drafts professional posts, generates AI graphics via Replicate, and posts to LinkedIn with media. | **Google Sheets** (New Row) | Google Sheets, Google Gemini, Replicate API, LinkedIn API |
+| [`AI Podcast Generator.json`](./AI%20Podcast%20Generator.json) | Generates a 2-minute spoken podcast script on a given topic, synthesizes it into natural speech via Murf AI, and downloads the podcast WAV file. | **Chat Trigger** (User Input) | Google Gemini, Murf AI HTTP Node |
 
 ---
 
@@ -185,6 +186,27 @@ graph TD
     style I fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 9. AI Podcast Generator
+A custom voice production pipeline. Receives a text topic query through an interactive n8n chat trigger interface, generates a natural, highly engaging 2-minute podcast script via Gemini 2.5 Flash, submits the resulting content to the Murf AI text-to-speech API (utilizing high-fidelity professional voice models), and fetches the processed high-quality WAV audio file for download.
+
+* **Trigger**: Chat Trigger (on receiving user message query).
+* **AI Logic**: 
+  - Standardizes the chat trigger parameters.
+  - Passes the input query topic to Gemini 2.5 Flash to write a 2-minute voice script without markdown tags.
+  - Submits a stream-synthesis request to Murf AI's voice server (locale: `en-US`, voice model: `Charles`, model: `FALCON`).
+  - Automatically streams and saves the downloadable podcast media file.
+* **Flow**:
+```mermaid
+graph TD
+    A[Chat Trigger] --> B[Basic LLM Chain via Gemini]
+    B --> C[HTTP Request: Generate Voice Audio via Murf AI]
+    C --> D[HTTP Request: Podcast Downloader]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -230,6 +252,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 4. **Twitter/X API**: Register your app on the [X Developer Portal](https://developer.x.com/) with **Read/Write** access, and configure user context connections.
 5. **SerpAPI (If using Summarizer Part 2)**: Register an account at [SerpAPI](https://serpapi.com/) and obtain a free API key.
 6. **Replicate API (If using Social Media Content with Image)**: Create an account on [Replicate](https://replicate.com/), generate an API token, and input `Token YOUR_REPLICATE_API_TOKEN` in the `Authorization` headers of both HTTP request nodes.
+7. **Murf AI API (If using AI Podcast Generator)**: Register an account on [Murf AI](https://murf.ai/), generate an API key, and configure `api-key` in the headers parameter of the HTTP node with `YOUR_MURF_API_KEY`.
 
 ### Step 3: Link Your Resources
 1. Create a spreadsheet in your Google Drive matching the matching column layout.
@@ -240,6 +263,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 6. In `AI News Summarizer Part 2.json`, open the `Fetch Events` HTTP node and replace the query parameter value `YOUR_SERPAPI_API_KEY` with your SerpAPI key.
 7. In `Automated Historical Content Publisher.json` and any other LinkedIn-enabled workflow, open the `Create a post` node and link your personal profile so `YOUR_LINKEDIN_PERSON_ID` is mapped to your member profile.
 8. In `Automated Social Media Content Generation with Image.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN`.
+9. In `AI Podcast Generator.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY`.
 
 ---
 
@@ -249,7 +273,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 > **Zero Credential Sharing**
 > 
 > * These exported `.json` workflows **do not** contain any active auth accounts, passwords, or client secrets. n8n isolates all credentials in an encrypted internal database and references them using internal placeholders (e.g., `credentials-uuid-here`).
-> * Any required raw API query strings (e.g., SerpAPI keys, Replicate API tokens) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_REPLICATE_API_TOKEN`, `YOUR_LINKEDIN_PERSON_ID`).
+> * Any required raw API query strings or headers (e.g., SerpAPI keys, Replicate API tokens, Murf AI API keys) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_REPLICATE_API_TOKEN`, `YOUR_MURF_API_KEY`, `YOUR_LINKEDIN_PERSON_ID`).
 > * Ensure your spreadsheet data files and local environment configuration sheets are ignored via the active `.gitignore`.
 
 ---
