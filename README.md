@@ -7,7 +7,7 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of thirteen production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
+A comprehensive suite of fourteen production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
 
 Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
@@ -30,6 +30,7 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`Automated Song Generation.json`](./Automated%20Song%20Generation.json) | Generates song lyrics on a given topic, generates audio tracks via Suno AI API, and downloads the finalized song file. | **Chat Trigger** (User Input) | Google Gemini, Suno AI HTTP Node |
 | [`AI Podcast Generator with Webhooks.json`](./AI%20Podcast%20Generator%20with%20Webhooks.json) | Listens for incoming webhook requests containing podcast topics, drafts scripts via Gemini, synthesizes them into speech via Murf AI, and sends back audio. | **Webhook Trigger** (POST Request) | Google Gemini, Murf AI HTTP Node, Webhook Node |
 | [`LinkedIn Post Generator.json`](./LinkedIn%20Post%20Generator.json) | Receives a raw article text via webhook POST, creates an analytical social media summary, drafts a highly engaging LinkedIn post, and publishes it. | **Webhook Trigger** (POST Request) | Google Gemini, LinkedIn API, Webhook Node |
+| [`Image Generator.json`](./Image%20Generator.json) | Listens for incoming webhook requests containing image prompts, submits them to Replicate (Flux 2 Pro), and returns the generated image. | **Webhook Trigger** (POST Request) | Replicate API, Webhook Node |
 
 ---
 
@@ -303,6 +304,30 @@ graph TD
     style E fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 14. Image Generator
+An event-driven visual generation service. Exposes a POST webhook receiver node taking custom text prompts, submits the prompt payload to the Replicate API (utilizing the **Flux 2 Pro** high-fidelity image rendering model), holds the workflow for 20 seconds, checks prediction statuses, downloads the finalized visual graphic, and responds to the webhook call returning the image binary directly.
+
+* **Trigger**: Webhook Trigger (exposed POST endpoint responding with the image binary).
+* **AI Logic**: 
+  - Gathers the raw text prompt from the webhook POST body.
+  - Generates the predictions via Replicate.
+  - Polls prediction status, fetches the completed file, and sends the binary output back.
+* **Flow**:
+```mermaid
+graph TD
+    A[Webhook Trigger: Recieve Prompts] --> B[HTTP Request: Send Text Prompt to API]
+    B --> C[Wait for Image]
+    C --> D[HTTP Request: Check Status]
+    D --> E[HTTP Request: Receive Generated Image]
+    E --> F[Respond to Webhook: Return Image]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#F2C94C,stroke:#fff,stroke-width:2px,color:#111
+    style D fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style E fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style F fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -366,6 +391,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 11. In `Automated Song Generation.json`, replace the hardcoded Suno API key in both HTTP Request header parameters with `Bearer YOUR_SUNO_API_TOKEN`.
 12. In `AI Podcast Generator with Webhooks.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
 13. In `LinkedIn Post Generator.json`, replace the hardcoded LinkedIn Member ID with `YOUR_LINKEDIN_PERSON_ID` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
+14. In `Image Generator.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
 
 ---
 

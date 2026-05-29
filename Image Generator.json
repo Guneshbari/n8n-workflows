@@ -1,0 +1,189 @@
+{
+  "name": "Image Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "YOUR_WEBHOOK_PATH",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c686c1bd-cd56-4ee0-b0a5-03f568a0c279",
+      "name": "Recieve Prompts",
+      "webhookId": "YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.replicate.com/v1/models/black-forest-labs/flux-2-pro/predictions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token YOUR_REPLICATE_API_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"input\": {\n    \"prompt\": \"{{ $json.body.text }}\",\n    \"resolution\": \"1 MP\",\n    \"aspect_ratio\": \"1:1\",\n    \"input_images\": [],\n    \"output_format\": \"webp\",\n    \"output_quality\": 80,\n    \"safety_tolerance\": 2\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "fa8cfe0d-32ee-436d-b762-c24a571caca4",
+      "name": "Send Text Prompt to API"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "2adffe13-2171-4d60-9a94-5e024b85ccb2",
+      "name": "Wait for Image",
+      "webhookId": "40e29044-f913-4286-96a6-3f9dc3ed7445"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls.get }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token YOUR_REPLICATE_API_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        672,
+        0
+      ],
+      "id": "e011e06d-8c78-42a3-9102-12a7b3a1f3fc",
+      "name": "Check Status"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.output }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        896,
+        0
+      ],
+      "id": "65c6cfe1-1315-497c-8216-c676ad2dba73",
+      "name": "Receive Generated Image"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "a874bd67-6595-44dc-a14b-09658afee60e",
+      "name": "Return Image"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recieve Prompts": {
+      "main": [
+        [
+          {
+            "node": "Send Text Prompt to API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Text Prompt to API": {
+      "main": [
+        [
+          {
+            "node": "Wait for Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Image": {
+      "main": [
+        [
+          {
+            "node": "Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status": {
+      "main": [
+        [
+          {
+            "node": "Receive Generated Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Generated Image": {
+      "main": [
+        [
+          {
+            "node": "Return Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "57c0f3a0-dd06-4000-b8cc-f4d6d7a710d7",
+  "meta": {
+    "instanceId": "969257b09ad2942bbaff2e2288304f4969030574d109cdeca05bf11f630884df"
+  },
+  "id": "bawpNHixEwZVPuV2",
+  "tags": []
+}
