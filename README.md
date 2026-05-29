@@ -7,7 +7,7 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of twelve production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
+A comprehensive suite of thirteen production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
 
 Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
@@ -29,6 +29,7 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`AI Audio Summarization and Speech Generation.json`](./AI%20Audio%20Summarization%20and%20Speech%20Generation.json) | Downloads audio input from chat, transcribes it via Groq Whisper, creates meeting-style minutes via Gemini, and synthesizes it to speech via Murf AI. | **Chat Trigger** (User Audio URL) | Groq Whisper Node, Google Gemini, Murf AI Node |
 | [`Automated Song Generation.json`](./Automated%20Song%20Generation.json) | Generates song lyrics on a given topic, generates audio tracks via Suno AI API, and downloads the finalized song file. | **Chat Trigger** (User Input) | Google Gemini, Suno AI HTTP Node |
 | [`AI Podcast Generator with Webhooks.json`](./AI%20Podcast%20Generator%20with%20Webhooks.json) | Listens for incoming webhook requests containing podcast topics, drafts scripts via Gemini, synthesizes them into speech via Murf AI, and sends back audio. | **Webhook Trigger** (POST Request) | Google Gemini, Murf AI HTTP Node, Webhook Node |
+| [`LinkedIn Post Generator.json`](./LinkedIn%20Post%20Generator.json) | Receives a raw article text via webhook POST, creates an analytical social media summary, drafts a highly engaging LinkedIn post, and publishes it. | **Webhook Trigger** (POST Request) | Google Gemini, LinkedIn API, Webhook Node |
 
 ---
 
@@ -280,6 +281,28 @@ graph TD
     style D fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 13. LinkedIn Post Generator
+A high-efficiency text curation and publishing automation. Exposes a POST webhook endpoint receiving raw article text, leverages Gemini 2.5 Flash to write a concise 200-word social media summary, uses another Gemini 2.5 Flash node to expand it into an engaging, professional LinkedIn post complete with structured sections, real-world context reflections, hashtags, and emojis, and automatically publishes the finalized post to the LinkedIn API.
+
+* **Trigger**: Webhook Trigger (exposed POST endpoint responding with the publication success message).
+* **AI Logic**: 
+  - Standardizes raw article parameters from the incoming webhook payload.
+  - Summarizes key insights into 5 points using Gemini 2.5 Flash.
+  - Drafts an authentic, professional branding post (200-300 words) using Gemini 2.5 Flash, and publishes it via the LinkedIn API.
+* **Flow**:
+```mermaid
+graph TD
+    A[Webhook Trigger: Article URL receiver] --> B[Generate Summary via Gemini]
+    B --> C[Generate LinkedIn Post via Gemini]
+    C --> D[Post to LinkedIn]
+    D --> E[Send Webhook Response]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
+    style E fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -342,6 +365,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 10. In `AI Audio Summarization and Speech Generation.json`, replace the hardcoded Groq API key with `Bearer YOUR_GROQ_API_KEY` and the Murf AI key with `YOUR_MURF_API_KEY` in their respective HTTP Request header parameters.
 11. In `Automated Song Generation.json`, replace the hardcoded Suno API key in both HTTP Request header parameters with `Bearer YOUR_SUNO_API_TOKEN`.
 12. In `AI Podcast Generator with Webhooks.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
+13. In `LinkedIn Post Generator.json`, replace the hardcoded LinkedIn Member ID with `YOUR_LINKEDIN_PERSON_ID` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
 
 ---
 
