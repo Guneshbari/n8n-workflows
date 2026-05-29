@@ -7,7 +7,7 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of ten production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
+A comprehensive suite of eleven production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
 
 Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
@@ -27,6 +27,7 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`Automated Social Media Content Generation with Image.json`](./Automated%20Social%20Media%20Content%20Generation%20with%20Image.json) | Curates insights for links, drafts professional posts, generates AI graphics via Replicate, and posts to LinkedIn with media. | **Google Sheets** (New Row) | Google Sheets, Google Gemini, Replicate API, LinkedIn API |
 | [`AI Podcast Generator.json`](./AI%20Podcast%20Generator.json) | Generates a 2-minute spoken podcast script on a given topic, synthesizes it into natural speech via Murf AI, and downloads the podcast WAV file. | **Chat Trigger** (User Input) | Google Gemini, Murf AI HTTP Node |
 | [`AI Audio Summarization and Speech Generation.json`](./AI%20Audio%20Summarization%20and%20Speech%20Generation.json) | Downloads audio input from chat, transcribes it via Groq Whisper, creates meeting-style minutes via Gemini, and synthesizes it to speech via Murf AI. | **Chat Trigger** (User Audio URL) | Groq Whisper Node, Google Gemini, Murf AI Node |
+| [`Automated Song Generation.json`](./Automated%20Song%20Generation.json) | Generates song lyrics on a given topic, generates audio tracks via Suno AI API, and downloads the finalized song file. | **Chat Trigger** (User Input) | Google Gemini, Suno AI HTTP Node |
 
 ---
 
@@ -233,6 +234,31 @@ graph TD
     style F fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 11. Automated Song Generation
+An AI music generation pipeline. Receives a user's song request/style query through an interactive n8n chat trigger interface, generates creative and structured song lyrics (verses, chorus, bridge) using Gemini 2.5 Flash Lite, submits a custom music generation task to the Suno AI API, waits for the track synthesis to finish, queries for compilation progress, and downloads the finalized high-quality audio song track.
+
+* **Trigger**: Chat Trigger (on receiving user message query containing song theme/style instructions).
+* **AI Logic**: 
+  - Standardizes song parameters from chat query input.
+  - Generates lyrics via Gemini 2.5 Flash Lite based on custom formatting rules.
+  - Submits a custom mode creation request to the Suno AI generation model (`V4_5ALL`).
+  - Waits for track generation, retrieves record data, and automatically downloads the synthesized audio track file.
+* **Flow**:
+```mermaid
+graph TD
+    A[Chat Trigger] --> B[Basic LLM Chain via Gemini]
+    B --> C[HTTP Request: Create Suno Audio Task]
+    C --> D[Wait Node]
+    D --> E[HTTP Request: Fetch Record Info]
+    E --> F[HTTP Request: Download Audio Track]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#F2C94C,stroke:#fff,stroke-width:2px,color:#111
+    style E fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style F fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -280,6 +306,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 6. **Replicate API (If using Social Media Content with Image)**: Create an account on [Replicate](https://replicate.com/), generate an API token, and input `Token YOUR_REPLICATE_API_TOKEN` in the `Authorization` headers of both HTTP request nodes.
 7. **Murf AI API (If using AI Podcast Generator)**: Register an account on [Murf AI](https://murf.ai/), generate an API key, and configure `api-key` in the headers parameter of the HTTP node with `YOUR_MURF_API_KEY`.
 8. **Groq API (If using AI Audio Summarization and Speech Generation)**: Create an API Key on the [Groq Console](https://console.groq.com/), and input `Bearer YOUR_GROQ_API_KEY` in the `Authorization` header of the transcription HTTP request node.
+9. **Suno AI API (If using Automated Song Generation)**: Sign up on the [Suno API portal](https://sunoapi.org/), obtain an API token, and input `Bearer YOUR_SUNO_API_TOKEN` in the `Authorization` header of both Suno HTTP nodes.
 
 ### Step 3: Link Your Resources
 1. Create a spreadsheet in your Google Drive matching the matching column layout.
@@ -292,6 +319,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 8. In `Automated Social Media Content Generation with Image.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN`.
 9. In `AI Podcast Generator.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY`.
 10. In `AI Audio Summarization and Speech Generation.json`, replace the hardcoded Groq API key with `Bearer YOUR_GROQ_API_KEY` and the Murf AI key with `YOUR_MURF_API_KEY` in their respective HTTP Request header parameters.
+11. In `Automated Song Generation.json`, replace the hardcoded Suno API key in both HTTP Request header parameters with `Bearer YOUR_SUNO_API_TOKEN`.
 
 ---
 
@@ -301,7 +329,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 > **Zero Credential Sharing**
 > 
 > * These exported `.json` workflows **do not** contain any active auth accounts, passwords, or client secrets. n8n isolates all credentials in an encrypted internal database and references them using internal placeholders (e.g., `credentials-uuid-here`).
-> * Any required raw API query strings or headers (e.g., SerpAPI keys, Replicate API tokens, Murf AI API keys, Groq API keys) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_REPLICATE_API_TOKEN`, `YOUR_MURF_API_KEY`, `YOUR_GROQ_API_KEY`, `YOUR_LINKEDIN_PERSON_ID`).
+> * Any required raw API query strings or headers (e.g., SerpAPI keys, Replicate API tokens, Murf AI API keys, Groq API keys, Suno API tokens) or LinkedIn Member IDs are generalized as placeholders (`YOUR_SERPAPI_API_KEY`, `YOUR_REPLICATE_API_TOKEN`, `YOUR_MURF_API_KEY`, `YOUR_GROQ_API_KEY`, `YOUR_SUNO_API_TOKEN`, `YOUR_LINKEDIN_PERSON_ID`).
 > * Ensure your spreadsheet data files and local environment configuration sheets are ignored via the active `.gitignore`.
 
 ---

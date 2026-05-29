@@ -1,0 +1,283 @@
+{
+  "name": "Automated Song Generation",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a4b66e93-369c-41a2-a791-7d1ddfc07027",
+      "name": "When chat message received",
+      "webhookId": "024d78d8-ac5a-4b61-9205-04fa3a0dd0fa"
+    },
+    {
+      "parameters": {
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a Lyrics Generation Agent.\n\nYour task is to take the user's request and generate complete song lyrics based on their input.\n\nInstructions:\n- Generate full song lyrics with verses, chorus, and bridge as appropriate\n- Keep the lyrics relevant to the user's theme/topic\n- Make the lyrics creative and engaging\n- Output only the lyrics text, nothing else\n- No extra formatting, just plain lyrics\n\nExample Input:\n\"Create a rap song about crypto in a fast style\"\n\nExample Output:\n[Verse 1]\nCrypto rising, numbers flying high\nBlockchain dreams reaching for the sky\nBitcoin pumping, altcoins in the race\nDigital money taking center stage\n\n[Chorus]\nTo the moon we go, never looking back\nCrypto life, staying on track\nHODL strong through the ups and downs\nDigital gold, wearing the crown\n\n[Verse 2]\nSmart contracts running through the night\nDeFi protocols burning bright\nNFTs and tokens everywhere\nCrypto future beyond compa"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f69a5c1e-e47b-43af-ae46-22f5baf45847",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        224
+      ],
+      "id": "eaaae31e-866d-416e-a631-99d9b0a0b6a3",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MdIdBqktfymXoCrv",
+          "name": "Google Gemini(PaLM) Api account 9575"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        0
+      ],
+      "id": "a191e5f0-cd1f-4a53-9841-a36fa8895d7a",
+      "name": "Wait",
+      "webhookId": "7843e7d6-50e8-4f23-9c83-835892e74463"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.sunoapi.org/api/v1/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_SUNO_API_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "customMode",
+              "value": "true"
+            },
+            {
+              "name": "instrumental",
+              "value": "false"
+            },
+            {
+              "name": "model",
+              "value": "V4_5ALL"
+            },
+            {
+              "name": "callBackUrl",
+              "value": "https://api.example.com/callback"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "name": "style",
+              "value": "Classical"
+            },
+            {
+              "name": "title",
+              "value": "Peaceful Piano Meditation"
+            },
+            {
+              "name": "negativeTags",
+              "value": "Heavy Metal, Upbeat Drums"
+            },
+            {
+              "name": "vocalGender",
+              "value": "m"
+            },
+            {
+              "name": "styleWeight",
+              "value": "0.65"
+            },
+            {
+              "name": "weirdnessConstraint",
+              "value": "0.65"
+            },
+            {
+              "name": "audioWeight",
+              "value": "0.65"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        576,
+        0
+      ],
+      "id": "3238c0b7-c5c9-4f25-9b30-de131a155e9b",
+      "name": "Create Audio Task"
+    },
+    {
+      "parameters": {
+        "url": "https://api.sunoapi.org/api/v1/generate/record-info",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "taskId",
+              "value": "={{ $json.data.taskId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_SUNO_API_TOKEN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        992,
+        0
+      ],
+      "id": "58fc7133-8e5b-4027-9967-b8f831f09b05",
+      "name": "generate-audio"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.data.response.sunoData[0].audioUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1200,
+        0
+      ],
+      "id": "65a8efdd-40bd-4e1e-88fc-cc8fa4bb7bd9",
+      "name": "Download Audio"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Create Audio Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "generate-audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Audio Task": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "generate-audio": {
+      "main": [
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5205f29d-44cc-49f9-8cad-b3b98dbfb040",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "969257b09ad2942bbaff2e2288304f4969030574d109cdeca05bf11f630884df"
+  },
+  "id": "fGMuCWD94UO3fuGW",
+  "tags": []
+}
