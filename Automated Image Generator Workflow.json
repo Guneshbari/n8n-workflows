@@ -1,5 +1,5 @@
 {
-  "name": "Image Generator",
+  "name": "Automated Image Generator Workflow",
   "nodes": [
     {
       "parameters": {

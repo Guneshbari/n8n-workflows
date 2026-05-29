@@ -1,5 +1,5 @@
 {
-  "name": "LinkedIn Post Generator",
+  "name": "Automated LinkedIn Post Generator Workflow",
   "nodes": [
     {
       "parameters": {

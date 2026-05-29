@@ -1,47 +1,17 @@
 {
-  "name": "AI Podcast Generator",
+  "name": "Automated Podcast Generator with Webhooks Workflow",
   "nodes": [
     {
       "parameters": {
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.4,
-      "position": [
-        0,
-        0
-      ],
-      "id": "b520c2f6-a08a-40a3-9f28-aea85d95d71b",
-      "name": "When chat message received",
-      "webhookId": "4c3af140-5367-4457-af56-62387bf9dec5"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=You are a professional podcast script writer. Create engaging, informative podcast content based on the given topic:{{ $json.chatInput }} . Length should be 2 minute when spoken. Just give the content only without labelling",
-        "batching": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.chainLlm",
-      "typeVersion": 1.9,
-      "position": [
-        224,
-        0
-      ],
-      "id": "289bae40-465f-4c0d-8b80-5e3ff573f2cc",
-      "name": "Basic LLM Chain"
-    },
-    {
-      "parameters": {
-        "modelName": "models/gemini-2.5-flash",
-        "options": {}
-      },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        304,
-        224
+        296,
+        32
       ],
-      "id": "ae965bb7-acfa-4b29-a1f3-72702083bf1a",
+      "id": "6ea32687-a367-468d-bb30-1dc91d2e6981",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
@@ -110,62 +80,64 @@
       "typeVersion": 4.4,
       "position": [
         576,
-        0
+        -192
       ],
-      "id": "a2a66cde-e87c-470d-b080-2d5a9e5af4eb",
+      "id": "99321f31-ed89-40db-a883-2fcb815cd632",
       "name": "Generate Voice Audio with Murfal"
     },
     {
       "parameters": {
-        "url": "={{$binary.data.url}}",
-        "options": {
-          "response": {
-            "response": {
-              "responseFormat": "file"
-            }
-          }
-        }
+        "path": "YOUR_WEBHOOK_PATH",
+        "responseMode": "responseNode",
+        "options": {}
       },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
       "position": [
-        784,
-        0
+        0,
+        -192
       ],
-      "id": "18e06e4a-3300-4634-8c1b-51a1aef1877a",
-      "name": "Podcast Downloader"
+      "id": "16c9387d-cfb6-4212-829e-94e2f52c82f9",
+      "name": "Podcast Request Receiver",
+      "webhookId": "YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional podcast script writer. Create engaging, informative podcast content based on the given topic:{{ $json.chatInput }} . Length should be 2 minute when spoken. Just give the content only without labelling",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        224,
+        -192
+      ],
+      "id": "2fba8f04-ef2b-4122-b717-5b2a12efb1e0",
+      "name": "Podcast Script Generator"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        800,
+        -192
+      ],
+      "id": "6d2da447-a409-4098-b7c3-6855d36284d1",
+      "name": "Audio Response Sender"
     }
   ],
   "pinData": {},
   "connections": {
-    "When chat message received": {
-      "main": [
-        [
-          {
-            "node": "Basic LLM Chain",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Google Gemini Chat Model": {
       "ai_languageModel": [
         [
           {
-            "node": "Basic LLM Chain",
+            "node": "Podcast Script Generator",
             "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Basic LLM Chain": {
-      "main": [
-        [
-          {
-            "node": "Generate Voice Audio with Murfal",
-            "type": "main",
             "index": 0
           }
         ]
@@ -175,7 +147,29 @@
       "main": [
         [
           {
-            "node": "Podcast Downloader",
+            "node": "Audio Response Sender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Podcast Request Receiver": {
+      "main": [
+        [
+          {
+            "node": "Podcast Script Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Podcast Script Generator": {
+      "main": [
+        [
+          {
+            "node": "Generate Voice Audio with Murfal",
             "type": "main",
             "index": 0
           }
@@ -188,11 +182,10 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "bbb17f33-0db7-4443-b9ec-4ca3688501bc",
+  "versionId": "070f4a37-ff3d-48c4-9b71-2cab06bde30e",
   "meta": {
-    "templateCredsSetupCompleted": true,
     "instanceId": "969257b09ad2942bbaff2e2288304f4969030574d109cdeca05bf11f630884df"
   },
-  "id": "5pf3NlNUHXQQO0wK",
+  "id": "pqLQlXOJcU1JxlfI",
   "tags": []
 }

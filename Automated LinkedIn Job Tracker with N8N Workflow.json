@@ -1,5 +1,5 @@
 {
-  "name": "Automated LinkedIn Job Tracker with N8N",
+  "name": "Automated LinkedIn Job Tracker with N8N Workflow",
   "nodes": [
     {
       "parameters": {

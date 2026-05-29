@@ -17,26 +17,26 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 
 | Workflow File | Purpose | Trigger Source | Core Integrations |
 | :--- | :--- | :--- | :--- |
-| [`Auto Learning Journey Publisher.json`](./Auto%20Learning%20Journey%20Publisher.json) | Converts learning logs into structured LinkedIn updates and punchy X posts. | **Google Sheets** (every minute) | Google Gemini, LinkedIn API, Twitter/X API |
-| [`Automated Social Media Content Generation.json`](./Automated%20Social%20Media%20Content%20Generation.json) | Curates and drafts insights for articles/links into social media updates. | **Google Sheets** (every hour) | Google Gemini, LinkedIn API, Twitter/X API |
-| [`AI News Summarizer.json`](./AI%20News%20Summarizer.json) | Aggregates multiple RSS tech feeds into an AI-categorized morning briefing. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Gmail API |
-| [`Auto AI Internship Applier.json`](./Auto%20AI%20Internship%20Applier.json) | Reads open positions from a spreadsheet and drafts/sends structured cover letters. | **Google Sheets** (New Row) | Google Gemini, Structured JSON Parser, Gmail API |
-| [`Automated LinkedIn Job Tracker with N8N.json`](./Automated%20LinkedIn%20Job%20Tracker%20with%20N8N.json) | Monitors LinkedIn job search RSS feeds, extracts skills, and drafts custom cover letters. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Google Sheets API |
-| [`AI News Summarizer Part 2.json`](./AI%20News%20Summarizer%20Part%202.json) | Combines RSS Feeds and SerpAPI Google News search query outputs into an expanded newsletter. | **Schedule Trigger** (Daily) | RSS Feeds, SerpAPI HTTP Node, Google Gemini, Gmail |
-| [`Automated Historical Content Publisher.json`](./Automated%20Historical%20Content%20Publisher.json) | Automatically discovers historical facts based on the current date, writes structured LinkedIn posts, and publishes them. | **Schedule Trigger** (Daily) | Google Gemini, LinkedIn API |
-| [`Automated Social Media Content Generation with Image.json`](./Automated%20Social%20Media%20Content%20Generation%20with%20Image.json) | Curates insights for links, drafts professional posts, generates AI graphics via Replicate, and posts to LinkedIn with media. | **Google Sheets** (New Row) | Google Sheets, Google Gemini, Replicate API, LinkedIn API |
-| [`AI Podcast Generator.json`](./AI%20Podcast%20Generator.json) | Generates a 2-minute spoken podcast script on a given topic, synthesizes it into natural speech via Murf AI, and downloads the podcast WAV file. | **Chat Trigger** (User Input) | Google Gemini, Murf AI HTTP Node |
-| [`AI Audio Summarization and Speech Generation.json`](./AI%20Audio%20Summarization%20and%20Speech%20Generation.json) | Downloads audio input from chat, transcribes it via Groq Whisper, creates meeting-style minutes via Gemini, and synthesizes it to speech via Murf AI. | **Chat Trigger** (User Audio URL) | Groq Whisper Node, Google Gemini, Murf AI Node |
-| [`Automated Song Generation.json`](./Automated%20Song%20Generation.json) | Generates song lyrics on a given topic, generates audio tracks via Suno AI API, and downloads the finalized song file. | **Chat Trigger** (User Input) | Google Gemini, Suno AI HTTP Node |
-| [`AI Podcast Generator with Webhooks.json`](./AI%20Podcast%20Generator%20with%20Webhooks.json) | Listens for incoming webhook requests containing podcast topics, drafts scripts via Gemini, synthesizes them into speech via Murf AI, and sends back audio. | **Webhook Trigger** (POST Request) | Google Gemini, Murf AI HTTP Node, Webhook Node |
-| [`LinkedIn Post Generator.json`](./LinkedIn%20Post%20Generator.json) | Receives a raw article text via webhook POST, creates an analytical social media summary, drafts a highly engaging LinkedIn post, and publishes it. | **Webhook Trigger** (POST Request) | Google Gemini, LinkedIn API, Webhook Node |
-| [`Image Generator.json`](./Image%20Generator.json) | Listens for incoming webhook requests containing image prompts, submits them to Replicate (Flux 2 Pro), and returns the generated image. | **Webhook Trigger** (POST Request) | Replicate API, Webhook Node |
+| [`Automated Learning Journey Publisher Workflow.json`](./Automated%20Learning%20Journey%20Publisher%20Workflow.json) | Converts learning logs into structured LinkedIn updates and punchy X posts. | **Google Sheets** (every minute) | Google Gemini, LinkedIn API, Twitter/X API |
+| [`Automated Social Media Content Generation Workflow.json`](./Automated%20Social%20Media%20Content%20Generation%20Workflow.json) | Curates and drafts insights for articles/links into social media updates. | **Google Sheets** (every hour) | Google Gemini, LinkedIn API, Twitter/X API |
+| [`Automated News Summarizer Workflow.json`](./Automated%20News%20Summarizer%20Workflow.json) | Aggregates multiple RSS tech feeds into an AI-categorized morning briefing. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Gmail API |
+| [`Automated Internship Applier Workflow.json`](./Automated%20Internship%20Applier%20Workflow.json) | Reads open positions from a spreadsheet and drafts/sends structured cover letters. | **Google Sheets** (New Row) | Google Gemini, Structured JSON Parser, Gmail API |
+| [`Automated LinkedIn Job Tracker with N8N Workflow.json`](./Automated%20LinkedIn%20Job%20Tracker%20with%20N8N%20Workflow.json) | Monitors LinkedIn job search RSS feeds, extracts skills, and drafts custom cover letters. | **Schedule Trigger** (Daily) | RSS Feeds, Google Gemini, Google Sheets API |
+| [`Automated News Summarizer Part 2 Workflow.json`](./Automated%20News%20Summarizer%20Part%202%20Workflow.json) | Combines RSS Feeds and SerpAPI Google News search query outputs into an expanded newsletter. | **Schedule Trigger** (Daily) | RSS Feeds, SerpAPI HTTP Node, Google Gemini, Gmail |
+| [`Automated Historical Content Publisher Workflow.json`](./Automated%20Historical%20Content%20Publisher%20Workflow.json) | Automatically discovers historical facts based on the current date, writes structured LinkedIn posts, and publishes them. | **Schedule Trigger** (Daily) | Google Gemini, LinkedIn API |
+| [`Automated Social Media Content Generation with Image Workflow.json`](./Automated%20Social%20Media%20Content%20Generation%20with%20Image%20Workflow.json) | Curates insights for links, drafts professional posts, generates AI graphics via Replicate, and posts to LinkedIn with media. | **Google Sheets** (New Row) | Google Sheets, Google Gemini, Replicate API, LinkedIn API |
+| [`Automated Podcast Generator Workflow.json`](./Automated%20Podcast%20Generator%20Workflow.json) | Generates a 2-minute spoken podcast script on a given topic, synthesizes it into natural speech via Murf AI, and downloads the podcast WAV file. | **Chat Trigger** (User Input) | Google Gemini, Murf AI HTTP Node |
+| [`Automated Audio Summarization and Speech Generation Workflow.json`](./Automated%20Audio%20Summarization%20and%20Speech%20Generation%20Workflow.json) | Downloads audio input from chat, transcribes it via Groq Whisper, creates meeting-style minutes via Gemini, and synthesizes it to speech via Murf AI. | **Chat Trigger** (User Audio URL) | Groq Whisper Node, Google Gemini, Murf AI Node |
+| [`Automated Song Generation Workflow.json`](./Automated%20Song%20Generation%20Workflow.json) | Generates song lyrics on a given topic, generates audio tracks via Suno AI API, and downloads the finalized song file. | **Chat Trigger** (User Input) | Google Gemini, Suno AI HTTP Node |
+| [`Automated Podcast Generator with Webhooks Workflow.json`](./Automated%20Podcast%20Generator%20with%20Webhooks%20Workflow.json) | Listens for incoming webhook requests containing podcast topics, drafts scripts via Gemini, synthesizes them into speech via Murf AI, and sends back audio. | **Webhook Trigger** (POST Request) | Google Gemini, Murf AI HTTP Node, Webhook Node |
+| [`Automated LinkedIn Post Generator Workflow.json`](./Automated%20LinkedIn%20Post%20Generator%20Workflow.json) | Receives a raw article text via webhook POST, creates an analytical social media summary, drafts a highly engaging LinkedIn post, and publishes it. | **Webhook Trigger** (POST Request) | Google Gemini, LinkedIn API, Webhook Node |
+| [`Automated Image Generator Workflow.json`](./Automated%20Image%20Generator%20Workflow.json) | Listens for incoming webhook requests containing image prompts, submits them to Replicate (Flux 2 Pro), and returns the generated image. | **Webhook Trigger** (POST Request) | Replicate API, Webhook Node |
 
 ---
 
 ## ⚡ Detailed Workflow Breakdowns
 
-### 1. Auto Learning Journey Publisher
+### 1. Automated Learning Journey Publisher Workflow
 Monitors your learning entries, summarizes raw study notes, and generates platform-specific professional updates.
 
 * **Trigger**: Google Sheets (polls every minute).
@@ -74,7 +74,7 @@ graph TD
     style F fill:#111,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 3. AI News Summarizer
+### 3. Automated News Summarizer Workflow
 Aggregates news items from multiple RSS tech portals, consolidates them, and feeds them into Gemini to build a beautifully structured morning briefing.
 
 * **Trigger**: Cron/Schedule (runs daily at 10:00 AM).
@@ -94,7 +94,7 @@ graph TD
     style G fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 4. Auto AI Internship Applier
+### 4. Automated Internship Applier Workflow
 Automates the initial outreach stage for internship applications by reviewing open pipeline spreadsheets and drafting personalized introduction letters.
 
 * **Trigger**: Google Sheets (new application row appended).
@@ -110,7 +110,7 @@ graph TD
     style D fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 5. Automated LinkedIn Job Tracker
+### 5. Automated LinkedIn Job Tracker Workflow
 Scrapes targeted job search feeds, parses specifications, identifies critical programming/architectural requirements, generates professional matching cover letters, and appends them to your tracking dashboard.
 
 * **Trigger**: Cron/Schedule (runs daily at 1:00 AM).
@@ -127,7 +127,7 @@ graph TD
     style E fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 6. AI News Summarizer Part 2
+### 6. Automated News Summarizer Part 2 Workflow
 An advanced, multi-source compilation pipeline. Simultaneously monitors custom technology RSS Feeds and queries Google News via a custom SerpAPI HTTP request to dynamically consolidate tech, development, and upcoming event schedules into one daily intelligence digest.
 
 * **Trigger**: Cron/Schedule (runs daily at 12:00 PM).
@@ -150,7 +150,7 @@ graph TD
     style H fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 7. Automated Historical Content Publisher
+### 7. Automated Historical Content Publisher Workflow
 Automatically tracks the current calendar date, prompts Gemini to find a compelling, historically significant event that occurred "on this day", formats a professional, high-engagement story layout with discussion prompts and hashtags, and publishes it to your LinkedIn feed.
 
 * **Trigger**: Cron/Schedule (runs daily at 12:00 PM).
@@ -165,7 +165,7 @@ graph TD
     style C fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 8. Automated Social Media Content Generation with Image
+### 8. Automated Social Media Content Generation with Image Workflow
 An advanced branding and thought-leadership creation agent. Consumes article links, summarizes their content, generates a professional LinkedIn writeup, prompts an image generation model on Replicate (Flux 2 Pro) to produce a matching high-quality visual, downloads the resulting graphic, and publishes a media post directly to LinkedIn.
 
 * **Trigger**: Google Sheets (new row containing article link).
@@ -191,7 +191,7 @@ graph TD
     style I fill:#0A66C2,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 9. AI Podcast Generator
+### 9. Automated Podcast Generator Workflow
 A custom voice production pipeline. Receives a text topic query through an interactive n8n chat trigger interface, generates a natural, highly engaging 2-minute podcast script via Gemini 2.5 Flash, submits the resulting content to the Murf AI text-to-speech API (utilizing high-fidelity professional voice models), and fetches the processed high-quality WAV audio file for download.
 
 * **Trigger**: Chat Trigger (on receiving user message query).
@@ -212,7 +212,7 @@ graph TD
     style D fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 10. AI Audio Summarization and Speech Generation
+### 10. Automated Audio Summarization and Speech Generation Workflow
 A high-performance voice-to-text-to-voice media processing agent. Takes an audio URL provided through an n8n chat trigger interface, downloads the audio file, transcribes it using Groq's high-speed **Whisper Large V3 Turbo** model, processes the raw transcription into highly structured meeting minutes using Gemini 2.5 Flash Lite (following strict formatting and concise phrasing rules), and synthesizes the finalized minutes back into a professional spoken WAV audio file via Murf AI's voice synthesis engine.
 
 * **Trigger**: Chat Trigger (on receiving user message query containing audio file URL).
@@ -237,7 +237,7 @@ graph TD
     style F fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 11. Automated Song Generation
+### 11. Automated Song Generation Workflow
 An AI music generation pipeline. Receives a user's song request/style query through an interactive n8n chat trigger interface, generates creative and structured song lyrics (verses, chorus, bridge) using Gemini 2.5 Flash Lite, submits a custom music generation task to the Suno AI API, waits for the track synthesis to finish, queries for compilation progress, and downloads the finalized high-quality audio song track.
 
 * **Trigger**: Chat Trigger (on receiving user message query containing song theme/style instructions).
@@ -262,7 +262,7 @@ graph TD
     style F fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 12. AI Podcast Generator with Webhooks
+### 12. Automated Podcast Generator with Webhooks Workflow
 An event-driven audio production service. Exposes a secure POST webhook endpoint receiving topic parameters, writes an elegant, informative podcast script using Gemini 2.5 Flash, processes the script text into natural voice audio via Murf AI's high-fidelity voice stream synthesis, and returns the synthesized high-quality WAV audio binary directly as the webhook HTTP response.
 
 * **Trigger**: Webhook Trigger (exposed POST endpoint responding with the audio stream).
@@ -282,7 +282,7 @@ graph TD
     style D fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 13. LinkedIn Post Generator
+### 13. Automated LinkedIn Post Generator Workflow
 A high-efficiency text curation and publishing automation. Exposes a POST webhook endpoint receiving raw article text, leverages Gemini 2.5 Flash to write a concise 200-word social media summary, uses another Gemini 2.5 Flash node to expand it into an engaging, professional LinkedIn post complete with structured sections, real-world context reflections, hashtags, and emojis, and automatically publishes the finalized post to the LinkedIn API.
 
 * **Trigger**: Webhook Trigger (exposed POST endpoint responding with the publication success message).
@@ -304,7 +304,7 @@ graph TD
     style E fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-### 14. Image Generator
+### 14. Automated Image Generator Workflow
 An event-driven visual generation service. Exposes a POST webhook receiver node taking custom text prompts, submits the prompt payload to the Replicate API (utilizing the **Flux 2 Pro** high-fidelity image rendering model), holds the workflow for 20 seconds, checks prediction statuses, downloads the finalized visual graphic, and responds to the webhook call returning the image binary directly.
 
 * **Trigger**: Webhook Trigger (exposed POST endpoint responding with the image binary).
@@ -334,23 +334,23 @@ graph TD
 
 For workflows that sync with Google Sheets, ensure your target worksheets are configured with the exact columns below:
 
-### Workflow: `Auto Learning Journey Publisher`
+### Workflow: `Automated Learning Journey Publisher Workflow`
 * **Sheet Name**: `Sheet1`
 * **Required Headers**: `Date` | `Topic/Module` | `What I Learned` | `Skills/Tools`
 
-### Workflow: `Automated Social Media Content Generation`
+### Workflow: `Automated Social Media Content Generation Workflow`
 * **Sheet Name**: `Sheet1`
 * **Required Headers**: `text` | `Article Links`
 
-### Workflow: `Auto AI Internship Applier`
+### Workflow: `Automated Internship Applier Workflow`
 * **Sheet Name**: `Sheet1`
 * **Required Headers**: `Full Name` | `Email` | `Position Applied` | `Details` | `Experience (Years)` | `Skills`
 
-### Workflow: `Automated LinkedIn Job Tracker`
+### Workflow: `Automated LinkedIn Job Tracker with N8N Workflow`
 * **Sheet Name**: `Sheet1`
 * **Required Headers**: `Title` | `Link` | `Published Date` | `About Company and job description` | `skills` | `cover letter`
 
-### Workflow: `Automated Social Media Content Generation with Image`
+### Workflow: `Automated Social Media Content Generation with Image Workflow`
 * **Sheet Name**: `Sheet1`
 * **Required Headers**: `newslink`
 
@@ -383,15 +383,15 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 3. Open the spreadsheet trigger/append nodes, replace `YOUR_SPREADSHEET_ID` in the **Document ID** parameter with your custom ID, and select the correct **Sheet Name**.
 4. In workflows that use custom RSS feeds (Job Tracker / News Summarizer), replace `YOUR_LINKEDIN_JOBS_RSS_FEED_URL` with your feed's URL.
 5. In email sender nodes, replace `YOUR_EMAIL@gmail.com` with your delivery address.
-6. In `AI News Summarizer Part 2.json`, open the `Fetch Events` HTTP node and replace the query parameter value `YOUR_SERPAPI_API_KEY` with your SerpAPI key.
-7. In `Automated Historical Content Publisher.json` and any other LinkedIn-enabled workflow, open the `Create a post` node and link your personal profile so `YOUR_LINKEDIN_PERSON_ID` is mapped to your member profile.
-8. In `Automated Social Media Content Generation with Image.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN`.
-9. In `AI Podcast Generator.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY`.
-10. In `AI Audio Summarization and Speech Generation.json`, replace the hardcoded Groq API key with `Bearer YOUR_GROQ_API_KEY` and the Murf AI key with `YOUR_MURF_API_KEY` in their respective HTTP Request header parameters.
-11. In `Automated Song Generation.json`, replace the hardcoded Suno API key in both HTTP Request header parameters with `Bearer YOUR_SUNO_API_TOKEN`.
-12. In `AI Podcast Generator with Webhooks.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
-13. In `LinkedIn Post Generator.json`, replace the hardcoded LinkedIn Member ID with `YOUR_LINKEDIN_PERSON_ID` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
-14. In `Image Generator.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
+6. In `Automated News Summarizer Part 2 Workflow.json`, open the `Fetch Events` HTTP node and replace the query parameter value `YOUR_SERPAPI_API_KEY` with your SerpAPI key.
+7. In `Automated Historical Content Publisher Workflow.json` and any other LinkedIn-enabled workflow, open the `Create a post` node and link your personal profile so `YOUR_LINKEDIN_PERSON_ID` is mapped to your member profile.
+8. In `Automated Social Media Content Generation with Image Workflow.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN`.
+9. In `Automated Podcast Generator Workflow.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY`.
+10. In `Automated Audio Summarization and Speech Generation Workflow.json`, replace the hardcoded Groq API key with `Bearer YOUR_GROQ_API_KEY` and the Murf AI key with `YOUR_MURF_API_KEY` in their respective HTTP Request header parameters.
+11. In `Automated Song Generation Workflow.json`, replace the hardcoded Suno API key in both HTTP Request header parameters with `Bearer YOUR_SUNO_API_TOKEN`.
+12. In `Automated Podcast Generator with Webhooks Workflow.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
+13. In `Automated LinkedIn Post Generator Workflow.json`, replace the hardcoded LinkedIn Member ID with `YOUR_LINKEDIN_PERSON_ID` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
+14. In `Automated Image Generator Workflow.json`, replace the hardcoded Replicate prediction tokens in both HTTP Request nodes with `Token YOUR_REPLICATE_API_TOKEN` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
 
 ---
 
