@@ -7,7 +7,7 @@
 [![LinkedIn Integration](https://img.shields.io/badge/Publish%20to-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://developer.linkedin.com/)
 [![X/Twitter Integration](https://img.shields.io/badge/Publish%20to-X%20%2F%20Twitter-000000?style=for-the-badge&logo=x&logoColor=white)](https://developer.x.com/)
 
-A comprehensive suite of eleven production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
+A comprehensive suite of twelve production-grade, enterprise-ready **n8n** automation workflows powered by **Google Gemini** LLMs. These workflows are designed to automate personal branding, professional career operations, email news curation, API event tracking, history content publication, and job pipeline management.
 
 Every workflow is fully generalized, safe for public distribution, and sanitized of all specific API Keys, personal emails, credential IDs, or spreadsheet locations. Import them directly into n8n, authenticate your credentials, and start automating immediately.
 
@@ -28,6 +28,7 @@ Every workflow is fully generalized, safe for public distribution, and sanitized
 | [`AI Podcast Generator.json`](./AI%20Podcast%20Generator.json) | Generates a 2-minute spoken podcast script on a given topic, synthesizes it into natural speech via Murf AI, and downloads the podcast WAV file. | **Chat Trigger** (User Input) | Google Gemini, Murf AI HTTP Node |
 | [`AI Audio Summarization and Speech Generation.json`](./AI%20Audio%20Summarization%20and%20Speech%20Generation.json) | Downloads audio input from chat, transcribes it via Groq Whisper, creates meeting-style minutes via Gemini, and synthesizes it to speech via Murf AI. | **Chat Trigger** (User Audio URL) | Groq Whisper Node, Google Gemini, Murf AI Node |
 | [`Automated Song Generation.json`](./Automated%20Song%20Generation.json) | Generates song lyrics on a given topic, generates audio tracks via Suno AI API, and downloads the finalized song file. | **Chat Trigger** (User Input) | Google Gemini, Suno AI HTTP Node |
+| [`AI Podcast Generator with Webhooks.json`](./AI%20Podcast%20Generator%20with%20Webhooks.json) | Listens for incoming webhook requests containing podcast topics, drafts scripts via Gemini, synthesizes them into speech via Murf AI, and sends back audio. | **Webhook Trigger** (POST Request) | Google Gemini, Murf AI HTTP Node, Webhook Node |
 
 ---
 
@@ -259,6 +260,26 @@ graph TD
     style F fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
+### 12. AI Podcast Generator with Webhooks
+An event-driven audio production service. Exposes a secure POST webhook endpoint receiving topic parameters, writes an elegant, informative podcast script using Gemini 2.5 Flash, processes the script text into natural voice audio via Murf AI's high-fidelity voice stream synthesis, and returns the synthesized high-quality WAV audio binary directly as the webhook HTTP response.
+
+* **Trigger**: Webhook Trigger (exposed POST endpoint responding with the audio stream).
+* **AI Logic**: 
+  - Standardizes parameters from the incoming webhook payload.
+  - Generates a raw voice script with Gemini 2.5 Flash based on the request topic.
+  - Requests voice synthesis from Murf AI (`voiceId`: `Charles`, `model`: `FALCON`), streaming the WAV content directly back to the webhook sender.
+* **Flow**:
+```mermaid
+graph TD
+    A[Webhook Trigger: Request Receiver] --> B[Podcast Script Generator via Gemini]
+    B --> C[HTTP Request: Generate Voice Audio via Murf AI]
+    C --> D[Respond to Webhook: Audio Response Sender]
+    style A fill:#34A853,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#4285F4,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#9B51E0,stroke:#fff,stroke-width:2px,color:#fff
+    style D fill:#EA4335,stroke:#fff,stroke-width:2px,color:#fff
+```
+
 ---
 
 ## 📊 Database & Spreadsheet Schemas
@@ -304,7 +325,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 4. **Twitter/X API**: Register your app on the [X Developer Portal](https://developer.x.com/) with **Read/Write** access, and configure user context connections.
 5. **SerpAPI (If using Summarizer Part 2)**: Register an account at [SerpAPI](https://serpapi.com/) and obtain a free API key.
 6. **Replicate API (If using Social Media Content with Image)**: Create an account on [Replicate](https://replicate.com/), generate an API token, and input `Token YOUR_REPLICATE_API_TOKEN` in the `Authorization` headers of both HTTP request nodes.
-7. **Murf AI API (If using AI Podcast Generator)**: Register an account on [Murf AI](https://murf.ai/), generate an API key, and configure `api-key` in the headers parameter of the HTTP node with `YOUR_MURF_API_KEY`.
+7. **Murf AI API (If using AI Podcast Generator or AI Podcast Generator with Webhooks)**: Register an account on [Murf AI](https://murf.ai/), generate an API key, and configure `api-key` in the headers parameter of the HTTP node with `YOUR_MURF_API_KEY`.
 8. **Groq API (If using AI Audio Summarization and Speech Generation)**: Create an API Key on the [Groq Console](https://console.groq.com/), and input `Bearer YOUR_GROQ_API_KEY` in the `Authorization` header of the transcription HTTP request node.
 9. **Suno AI API (If using Automated Song Generation)**: Sign up on the [Suno API portal](https://sunoapi.org/), obtain an API token, and input `Bearer YOUR_SUNO_API_TOKEN` in the `Authorization` header of both Suno HTTP nodes.
 
@@ -320,6 +341,7 @@ Set up credentials inside n8n for any integrations utilized by your imported wor
 9. In `AI Podcast Generator.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY`.
 10. In `AI Audio Summarization and Speech Generation.json`, replace the hardcoded Groq API key with `Bearer YOUR_GROQ_API_KEY` and the Murf AI key with `YOUR_MURF_API_KEY` in their respective HTTP Request header parameters.
 11. In `Automated Song Generation.json`, replace the hardcoded Suno API key in both HTTP Request header parameters with `Bearer YOUR_SUNO_API_TOKEN`.
+12. In `AI Podcast Generator with Webhooks.json`, replace the hardcoded Murf AI key in the HTTP Request header parameters with `YOUR_MURF_API_KEY` and define a custom `YOUR_WEBHOOK_PATH` in the Webhook node.
 
 ---
 
